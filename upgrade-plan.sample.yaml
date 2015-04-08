@@ -1,0 +1,46 @@
+juju-core:
+  upgrade: true
+  version: latest
+  failure: abort
+
+charms:
+  0:
+    postgresql:
+      charm-store-revision: 3
+      #branch: "@revision=foo,,@tag=foo"
+      failure: continue
+      force: false
+
+      pre-upgrade:
+        failure: abort
+        run:
+          local:
+            - "juju status"
+          unit:
+            - "ps -fea | grep pg"
+
+      post-upgrade:
+        failure: continue
+        run:
+          local:
+            - "juju status"
+          unit:
+            - "ps -fea | grep mysql"
+
+  1:
+    rabbitmq-server:
+      charm-store-revision: 4
+      failure: continue
+      force: true
+
+pre-upgrade:
+  failure: abort
+  run:
+    local:
+      - "juju status"
+
+post-upgrade:
+  failure: continue
+  run:
+    local:
+      - "juju add-relation foo:bar bar:foo"
