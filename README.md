@@ -11,9 +11,10 @@ juju-core:
   upgrade: true
   version: latest # pick the latest, or use "1.23.0"
   failure: abort  # on failure, abort your upgrade plan
+  upload-tools: true
 
-steps:
 #Here you define your upgrade plan steps
+steps:
   0:
     postgresql:
       charm-store-revision: 3
@@ -54,5 +55,4 @@ post-upgrade:
   run:
     local:
     - "juju add-relation foo:bar bar:foo"
-
 ```

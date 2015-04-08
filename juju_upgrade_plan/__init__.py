@@ -147,16 +147,20 @@ def upgrade_juju(config):
         if must_upgrade_juju(*version.split(".")):
                 upgrade_cmd = "juju upgrade-juju --yes --version {0}".format(
                     version)
-        else:
-            upgrade_cmd = "juju upgrade-juju --yes".strip("\n")
-        try:
-            logger.info("Performing juju-core upgrade: %s" % upgrade_cmd)
-            check(upgrade_cmd)
-        except Exception as ex:
-            logger.warn(ex)
-            if config.get('failure', 'abort') in ('abort', ):
-                raise JujuUpgradeError(
-                    "Error updating juju-core: %s" % ex)
+    else:
+        upgrade_cmd = "juju upgrade-juju --yes".strip("\n")
+
+    if config.get("upload-tools", False):
+        upgrade_cmd += " --upload-tools"
+
+    try:
+        logger.info("Performing juju-core upgrade: %s" % upgrade_cmd)
+        check(upgrade_cmd)
+    except Exception as ex:
+        logger.warn(ex)
+        if config.get('failure', 'abort') in ('abort', ):
+            raise JujuUpgradeError(
+                "Error updating juju-core: %s" % ex)
 
 
 def do_upgrade(config):
