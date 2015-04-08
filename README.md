@@ -9,18 +9,17 @@ The following is an example configuration used by this plugin. (WIP)
 ```yaml
 juju-core:
   upgrade: true
-  version: latest
-  failure: abort
+  version: latest # pick the latest, or use "1.23.0"
+  failure: abort  # on failure, abort your upgrade plan
 
-charms:
-#Here you define the upgrade steps
+steps:
+#Here you define your upgrade plan steps
   0:
     postgresql:
       charm-store-revision: 3
       #branch: "@revision=foo,,@tag=foo"
-      failure: continue
+      failure: continue  # on failure, continue with your upgrade plan
       force: false
-
       pre-upgrade:
         failure: continue
         run:
@@ -36,7 +35,6 @@ charms:
             - "juju status"
           unit:
             - "ps -fea | grep mysql"
-
   1:
     rabbitmq-server:
       charm-store-revision: 4
@@ -56,3 +54,5 @@ post-upgrade:
   run:
     local:
     - "juju add-relation foo:bar bar:foo"
+
+```

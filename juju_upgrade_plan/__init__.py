@@ -174,12 +174,12 @@ def do_upgrade(config):
         except JujuUpgradeError:
             raise
 
-    charms = config.get('charms', None)
+    steps = config.get('steps', None)
 
-    if not charms:
-        logger.warn("Not defined charms to upgrade")
+    if not steps:
+        logger.warn("Not defined upgrade steps to perform")
 
-    for step, services in charms.items():
+    for step, services in steps.items():
         logger.info("Performing upgrade step %d" % step)
 
         for service, service_config in services.items():
