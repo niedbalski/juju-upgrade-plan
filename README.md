@@ -22,12 +22,12 @@ charms:
       force: false
 
       pre-upgrade:
-        failure: abort
+        failure: continue
         run:
           local:
-            - "juju status"
+              - "juju status"
           unit:
-            - "ps -fea | grep pg"
+              - "ps -fea | grep pg"
 
       post-upgrade:
         failure: continue

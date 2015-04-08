@@ -101,24 +101,35 @@ def run_hook(name, config, service=None):
 
         if unit:
             for cmd in unit:
-                output = run_unit(service, cmd)
-                for unit in output:
-                    unit_id = unit.get("MachineId")
-                    logger.info(
-                        "Running hook: %s on remote unit: %s" % (name,
-                                                                 unit_id))
-                    if 'Stderr' in unit:
-                        err = unit.get('Stderr')
-                        if failure in ("abort", ):
-                            msg = "failure set to abort: Error executing hook: %s, cmd: %s, error: %s, unit: %s" % \
-                                  (name, cmd, err, unit_id)
-                            logger.warn(msg)
-                        else:
-                            logger.warn(
-                                "Hook:%s failed, but failure mode has been set to continue, error:%s" % (
-                                    name, err))
-
+                try:
+                    output = run_unit(service, cmd)
+                except Exception as ex:
+                    if failure in ("abort", ):
+                        msg = "Error executing hook: %s, error: %s" % (
+                            name, ex)
+                        logger.warn(msg)
                         raise HookAbort(msg)
+                    else:
+                        logger.warn(
+                            "Hook:%s failed, but failure mode has been set to continue, error:%s" % (
+                                name, ex))
+                else:
+                    for unit in output:
+                        unit_id = unit.get("MachineId")
+                        logger.info(
+                            "Running hook: %s on remote unit: %s" % (name,
+                                                                     unit_id))
+                        if 'Stderr' in unit:
+                            err = unit.get('Stderr')
+                            if failure in ("abort", ):
+                                msg = "failure set to abort: Error executing hook: %s, cmd: %s, error: %s, unit: %s" % \
+                                      (name, cmd, err, unit_id)
+                                logger.warn(msg)
+                                raise HookAbort(msg)
+                            else:
+                                logger.warn(
+                                    "Hook:%s failed, but failure mode has been set to continue, error:%s" % (
+                                        name, err))
 
 
 def upgrade_charm_from_cs(service, revision, force=False):
@@ -178,7 +189,7 @@ def do_upgrade(config):
                 run_hook("pre-upgrade", service_config,
                          service=service)
             except HookNotFound as ex:
-                logger.info("Hook:%s not defined on service: %s" % ex, service)
+                logger.info("Hook:%s not defined on service: %s" % (ex, service))
 
             charm_store_revision = service_config.get(
                 "charm-store-revision",
@@ -206,8 +217,8 @@ def do_upgrade(config):
                         run_hook("post-upgrade", service_config,
                                  service=service)
                     except HookNotFound as ex:
-                        logger.warn("Hook:%s not defined on service: %s" % ex,
-                                    service)
+                        logger.warn("Hook:%s not defined on service: %s" % (ex,
+                                    service))
 
     try:
         run_hook("post-upgrade", config)
