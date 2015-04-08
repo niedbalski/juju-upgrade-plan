@@ -5,7 +5,7 @@ import shlex
 import sys
 import logging
 
-__author__ = "Jorge Niedbalski <jorge.niedbalski@canonical.com>"
+__author__ = "Jorge Niedbalski <jnr@metaklass.org>"
 
 
 logger = logging.getLogger(__name__)
