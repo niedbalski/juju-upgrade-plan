@@ -21,7 +21,7 @@ steps:
       failure: continue  # on failure, continue with your upgrade plan
       force: false
       pre-upgrade:
-        failure: continue
+        failure: continue # if any of the commands fails ( local or on the service unit ) continue.
         run:
           local:
               - "juju status"
@@ -41,7 +41,7 @@ steps:
       failure: continue
       force: true
 
-#This will run , before any upgrade is applied
+#This will run , before any upgrade is applied (only local)
 pre-upgrade:
   failure: abort
   run:
